@@ -1,139 +1,114 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 
 interface AuthModalProps {
   mode: 'login' | 'signup';
   onClose: () => void;
   onSwitch: (mode: 'login' | 'signup') => void;
+  onSuccess: (userType: 'doctor' | 'patient') => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitch }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [doctorId, setDoctorId] = useState('');
-  const [userType, setUserType] = useState<'patient' | 'doctor'>('patient');
-  const { login, signup } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
+const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitch, onSuccess }) => {
+  const [userType, setUserType] = useState<'patient' | 'doctor'>('patient');  // Default to patient
+  
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      if (mode === 'login') {
-        await login(email, password);
-      } else {
-        await signup(email, password, userType, name, doctorId);
-      }
-      onClose();
-    } catch (error) {
-      console.error('Authentication error:', error);
-    }
+    onSuccess(userType);
   };
-
+  
+  
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-        >
-          <X className="h-6 w-6" />
-        </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">
+            {mode === 'login' ? 'Login' : 'Sign Up'}
+          </h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         
-        <h2 className="text-2xl font-bold mb-6">
-          {mode === 'login' ? 'Welcome Back' : 'Create Account'}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === 'signup' && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Account Type
-                </label>
-                <select
-                  value={userType}
-                  onChange={(e) => setUserType(e.target.value as 'patient' | 'doctor')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="patient">Patient</option>
-                  <option value="doctor">Doctor</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              {userType === 'patient' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Doctor ID
-                  </label>
-                  <input
-                    type="text"
-                    value={doctorId}
-                    onChange={(e) => setDoctorId(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              )}
-            </>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               Email
             </label>
             <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Email"
               required
             />
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Password
             </label>
             <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Password"
               required
             />
           </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-          >
-            {mode === 'login' ? 'Login' : 'Sign Up'}
-          </button>
+          
+          
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Account Type
+              </label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="patient"
+                    checked={userType === 'patient'}
+                    onChange={() => setUserType('patient')}
+                    className="mr-2"
+                  />
+                  Patient
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="doctor"
+                    checked={userType === 'doctor'}
+                    onChange={() => setUserType('doctor')}
+                    className="mr-2"
+                  />
+                  Doctor
+                </label>
+              </div>
+            </div>
+          
+          
+          <div className="flex items-center justify-between">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              {mode === 'login' ? 'Login' : 'Sign Up'}
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => onSwitch(mode === 'login' ? 'signup' : 'login')}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              {mode === 'login' ? 'Create an account' : 'Already have an account?'}
+            </button>
+          </div>
         </form>
-
-        <p className="mt-4 text-center text-sm text-gray-600">
-          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <button
-            onClick={() => onSwitch(mode === 'login' ? 'signup' : 'login')}
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            {mode === 'login' ? 'Sign up' : 'Login'}
-          </button>
-        </p>
       </div>
     </div>
   );
