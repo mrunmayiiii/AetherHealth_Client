@@ -3,9 +3,9 @@ import { Activity, Heart, TrendingUp, LogOut, User, Pill, History, FileText, Set
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import BmiCalculator from '../components/BmiCalculator';
-import AppointmentsPage from '../components/AppointmentsPage';
-import MedicationsPage from '../components/MedicationsPage';
-import ProfileInfoPage from '../components/ProfileInfoPage';
+import AppointmentsPage from './Appointmentspage';
+import MedicationsPage from './MedicationsPage';
+import ProfileInfoPage from './ProfileInfoPage';
 
 const mockData = {
   vitals: [
