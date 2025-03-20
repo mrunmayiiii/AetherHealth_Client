@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 import { Activity } from 'lucide-react';
 import AuthModal from '../components/AuthModal';
+import { useNavigate } from 'react-router-dom'; // Import router for navigation
 
 const LandingPage = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+  const navigate = useNavigate(); // Initialize router
+
+  // Function to handle successful authentication
+  const handleAuthSuccess = (userType: string) => {
+    setShowAuthModal(false);
+    
+    // Redirect to appropriate dashboard based on user type
+    if (userType === 'doctor') {
+      navigate('/doctor-dashboard');
+    } else {
+      navigate('/dashboard'); // For future implementation
+    }
+  };
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -27,6 +41,26 @@ const LandingPage = () => {
                 </a>
               ))}
             </div>
+            <div className="hidden md:flex space-x-2">
+              <button
+                onClick={() => {
+                  setAuthMode('login');
+                  setShowAuthModal(true);
+                }}
+                className="px-4 py-2 text-blue-600 rounded-md font-medium hover:bg-blue-50 transition duration-150"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => {
+                  setAuthMode('signup');
+                  setShowAuthModal(true);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition duration-150"
+              >
+                Sign Up
+              </button>
+            </div>
             <div className="md:hidden">
               <button className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,48 +74,49 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <div className="relative">
-  {/* Background Image */}
-  <div
-    className="absolute inset-0 bg-cover bg-center "
-    style={{
-      backgroundImage: "url('/new.png')",
-      backgroundPosition: "center",
-      filter: "brightness(0.6)"
-    }}
-  ></div>
-  {/* Gradient Overlay */}
-  <div className="absolute "></div>
-  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-    <div className="md:w-3/5">
-      <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-        Take Control of Your Health Journey
-      </h1>
-      <p className="mt-4 text-xl text-blue-100">
-        Monitor, manage, and improve your health outcomes with personalized tracking and insights.
-      </p>
-      <div className="mt-8 flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-        <button
-          onClick={() => {
-            setAuthMode('login');
-            setShowAuthModal(true);
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/new.png')",
+            backgroundPosition: "center",
+            filter: "brightness(0.6)"
           }}
-          className="px-8 py-3 bg-white text-blue-700 rounded-lg font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition duration-150"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => {
-            setAuthMode('signup');
-            setShowAuthModal(true);
-          }}
-          className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium shadow-md hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-0.5 transition duration-150"
-        >
-          Get Started Free
-        </button>
+        ></div>
+        {/* Gradient Overlay */}
+        <div className="absolute"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+          <div className="md:w-3/5">
+            <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+              Take Control of Your Health Journey
+            </h1>
+            <p className="mt-4 text-xl text-blue-100">
+              Monitor, manage, and improve your health outcomes with personalized tracking and insights.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+              <button
+                onClick={() => {
+                  setAuthMode('login');
+                  setShowAuthModal(true);
+                }}
+                className="px-8 py-3 bg-white text-blue-700 rounded-lg font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition duration-150"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => {
+                  setAuthMode('signup');
+                  setShowAuthModal(true);
+                }}
+                className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium shadow-md hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-0.5 transition duration-150"
+              >
+                Get Started Free
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+
       {/* Featured Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
@@ -217,8 +252,9 @@ const LandingPage = () => {
         <AuthModal
           mode={authMode}
           onClose={() => setShowAuthModal(false)}
-          onSwitch={(mode) => setAuthMode(mode)}
-        />
+          onSwitch={(mode: "login" | "signup") => setAuthMode(mode)}
+          onSuccess={handleAuthSuccess}
+        />      
       )}
     </div>
   );
