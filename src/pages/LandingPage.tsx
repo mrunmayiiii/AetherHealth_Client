@@ -14,10 +14,10 @@ const LandingPage = () => {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <Activity className="h-8 w-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-blue-900">HealthTrack</span>
+              <span className="ml-2 text-xl font-bold text-blue-900">AETHER HEALTH</span>
             </div>
-            <div className="hidden md:flex space-x-1">
-              {['Products', 'Services', 'Community', 'Resources', 'Pricing', 'Contact'].map((item) => (
+            <div className="hidden md:flex space-x-1 text-xlg">
+              {[ 'About Us', 'Contact'].map((item) => (
                 <a 
                   key={item}
                   href="#" 
